@@ -29,6 +29,7 @@ public class GeneticAlgorithm {
         Individual population[];
         Individual fittest = null;
         Data data1[] = readFile1();
+        Random rand = new Random();
 
         //test data1
         for (int i = 0; i < 10; i++) {
@@ -53,7 +54,7 @@ public class GeneticAlgorithm {
         //fills individual's gene with binary randomly
         for (int i = 0; i < p; i++) {
             for (int j = 0; j < n; j++) {
-                population[i].gene[j] = (Math.random() < 0.5) ? 0 : 1;
+                population[i].gene[j] = rand.nextInt(2);
             }
             population[i].fitness = 0;
         }
@@ -82,7 +83,7 @@ public class GeneticAlgorithm {
             Individual offspring[] = new Individual[p];
 
             int parent1, parent2;
-            Random rand = new Random();
+            
             for (int i = 0; i < p; i++) {
                 parent1 = rand.nextInt(p); //randomly choose parent
                 parent2 = rand.nextInt(p); //randomly choose parent
