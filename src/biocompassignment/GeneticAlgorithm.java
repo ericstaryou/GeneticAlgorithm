@@ -24,7 +24,7 @@ public class GeneticAlgorithm {
         int noOfGeneration = 50;
         int p = 50;
         int n = 60;
-        int mut = 60;
+        int mut = 20;
         //int t = 10;
         Individual population[];
         Individual fittest = null;
@@ -32,13 +32,13 @@ public class GeneticAlgorithm {
         Random rand = new Random();
 
         //test data1
-        for (int i = 0; i < 10; i++) {
-            System.out.print("Condition: ");
-            for (int j = 0; j < 5; j++) {
-                System.out.print(data1[i].var[j]);
-            }
-            System.out.println(" " + data1[i].output);
-        }
+//        for (int i = 0; i < 10; i++) {
+//            System.out.print("Condition: ");
+//            for (int j = 0; j < 5; j++) {
+//                System.out.print(data1[i].var[j]);
+//            }
+//            System.out.println(" " + data1[i].output);
+//        }
 
         //array for line chart dataset
         int bf[] = new int[noOfGeneration];
@@ -53,25 +53,24 @@ public class GeneticAlgorithm {
 
         //fills individual's gene with binary randomly
         for (int i = 0; i < p; i++) {
-            int counter = 1;
+            int counter = 0;
             for (int j = 0; j < n; j++) {
-                if(counter < 6){
+                if (counter < 5) {
                     population[i].gene[j] = rand.nextInt(3);
                     counter++;
-                }    
-                else if(counter == 6){
+                } else if (counter == 5) {
                     population[i].gene[j] = rand.nextInt(2);
-                    counter = 1;
+                    counter = 0;
                 }
             }
 
             population[i].fitness = 0;
         }
-        
-            //genome check
-            System.out.println("After init: ");
-            printGenome(population, p, n);
-            System.out.println("");
+
+        //genome check
+        System.out.println("After init: ");
+        printGenome(population, p, n);
+        System.out.println("");
 
         //evaluate each individual
         GeneticAlgorithm.evaluateIndividuals(population, p, n, data1);
@@ -120,9 +119,6 @@ public class GeneticAlgorithm {
                     offspring[i].gene[j] = offspring[i + 1].gene[j];
                     offspring[i + 1].gene[j] = temp;
                 }
-
-                //offspring[i].fitness = 0;
-                //offspring[i + 1].fitness = 0;
             }
 
             //genome check
@@ -141,28 +137,50 @@ public class GeneticAlgorithm {
             for (int i = 0; i < p; i++) {
                 for (int j = 0; j < n; j++) {
                     if (rand.nextInt(1000) < mut) {
-                        if (offspring[i].gene[j] == 0) {
-                            offspring[i].gene[j] = 1;
-                        } else {
-                            offspring[i].gene[j] = 0;
+                        int counter = 0;
+                        if (counter < 5) {
+                            if (offspring[i].gene[j] == 0) {
+                                int temp = rand.nextInt(3);
+                                while (temp == 0) {
+                                    temp = rand.nextInt(3);
+                                }
+                                offspring[i].gene[j] = temp;
+                            } else if (offspring[i].gene[j] == 1) {
+                                int temp = rand.nextInt(3);
+                                while (temp == 1) {
+                                    temp = rand.nextInt(3);
+                                }
+                                offspring[i].gene[j] = temp;
+                            } else if (offspring[i].gene[j] == 2) {
+                                int temp = rand.nextInt(3);
+                                while (temp == 2) {
+                                    temp = rand.nextInt(3);
+                                }
+                                offspring[i].gene[j] = temp;
+                            }
+                            counter++;
+                        } else if (counter == 5) {
+                            if (offspring[i].gene[j] == 0) {
+                                offspring[i].gene[j] = 1;
+                            } else {
+                                offspring[i].gene[j] = 0;
+                            }
+                            counter = 0;
                         }
-                    }
+                    } 
                 }
             }
 
             //genome check
-//            System.out.println("After Mutation:");
-//            printGenome(offspring, p, n);
-//            System.out.println("");
+            System.out.println("After Mutation:");
+            printGenome(offspring, p, n);
+            System.out.println("");
             evaluateIndividuals(offspring, p, n, data1);
 
             //total fitness check
             System.out.println("Best fitness check after mutation: " + getBestFitness(offspring, p));
             System.out.println("Mean fitness check after mutation: " + getMeanFitness(offspring, p));
             System.out.println("Total fitness: " + getTotalFitness(offspring, p));
-            for (int i = 0; i < p; i++) {
-                System.out.println(offspring[i].fitness);
-            }
             System.out.println("");
 
             //pass the best fitness to next gen
