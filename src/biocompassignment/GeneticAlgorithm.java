@@ -53,11 +53,25 @@ public class GeneticAlgorithm {
 
         //fills individual's gene with binary randomly
         for (int i = 0; i < p; i++) {
+            int counter = 1;
             for (int j = 0; j < n; j++) {
-                population[i].gene[j] = rand.nextInt(2);
+                if(counter < 6){
+                    population[i].gene[j] = rand.nextInt(3);
+                    counter++;
+                }    
+                else if(counter == 6){
+                    population[i].gene[j] = rand.nextInt(2);
+                    counter = 1;
+                }
             }
+
             population[i].fitness = 0;
         }
+        
+            //genome check
+            System.out.println("After init: ");
+            printGenome(population, p, n);
+            System.out.println("");
 
         //evaluate each individual
         GeneticAlgorithm.evaluateIndividuals(population, p, n, data1);
@@ -83,7 +97,7 @@ public class GeneticAlgorithm {
             Individual offspring[] = new Individual[p];
 
             int parent1, parent2;
-            
+
             for (int i = 0; i < p; i++) {
                 parent1 = rand.nextInt(p); //randomly choose parent
                 parent2 = rand.nextInt(p); //randomly choose parent
@@ -254,16 +268,15 @@ public class GeneticAlgorithm {
                 //populate output
                 rule[j].action = Integer.parseInt(act);
             }
-            
+
             //compare indie's rule with sample rule to determine fitness
             for (int j = 0; j < 32; j++) { //for each data check to see how many rules got it right
                 for (int k = 0; k < 10; k++) { //for each rule check the condition and result
                     for (int l = 0; l < 5; l++) {
-                        if(data[j].var[l] != rule[k].cond[l]){
+                        if (data[j].var[l] != rule[k].cond[l]) {
                             break;
-                        }
-                        else if(l == 4){
-                            if(data[j].output == rule[k].action){
+                        } else if (l == 4) {
+                            if (data[j].output == rule[k].action) {
                                 pop[i].fitness++;
                             }
                         }
