@@ -21,9 +21,10 @@ public class GeneticAlgorithm {
      */
     public static void main(String[] args) {
         int genTracker = 1;
-        int noOfGeneration = 50;
+        int noOfGeneration = 500;
         int p = 50;
         int n = 60;
+        int mut = 300;
         //int t = 10;
         Individual population[];
         Individual fittest = null;
@@ -124,7 +125,7 @@ public class GeneticAlgorithm {
             //Mutation
             for (int i = 0; i < p; i++) {
                 for (int j = 0; j < n; j++) {
-                    if (rand.nextInt(n) == 0) {
+                    if (rand.nextInt(1000) < mut) {
                         if (offspring[i].gene[j] == 0) {
                             offspring[i].gene[j] = 1;
                         } else {
@@ -143,6 +144,10 @@ public class GeneticAlgorithm {
             //total fitness check
             System.out.println("Best fitness check after mutation: " + getBestFitness(offspring, p));
             System.out.println("Mean fitness check after mutation: " + getMeanFitness(offspring, p));
+            System.out.println("Total fitness: " + getTotalFitness(offspring, p));
+            for (int i = 0; i < p; i++) {
+                System.out.println(offspring[i].fitness);
+            }
             System.out.println("");
 
             //pass the best fitness to next gen
@@ -250,19 +255,20 @@ public class GeneticAlgorithm {
             }
             
             //compare indie's rule with sample rule to determine fitness
-            for (int j = 0; j < 10; j++) {
-                if(data[j].output == rule[j].action){
-                    for (int k = 0; k < 5; k++) {
-                        if(data[j].var[k] != rule[j].cond[k]){
+            for (int j = 0; j < 32; j++) { //for each data check to see how many rules got it right
+                for (int k = 0; k < 10; k++) { //for each rule check the condition and result
+                    for (int l = 0; l < 5; l++) {
+                        if(data[j].var[l] != rule[k].cond[l]){
                             break;
                         }
-                        if(k == 4){
-                           pop[i].fitness++; 
+                        else if(l == 4){
+                            if(data[j].output == rule[k].action){
+                                pop[i].fitness++;
+                            }
                         }
                     }
                 }
             }
-            
         }
     }
 
@@ -291,11 +297,11 @@ public class GeneticAlgorithm {
 
     public static Data[] readFile1() {
         Scanner sc = new Scanner(GeneticAlgorithm.class.getResourceAsStream("/data1.txt"));
-        Data data1[] = new Data[10];
-        for (int i = 0; i < 10; i++) {
+        Data data1[] = new Data[32];
+        for (int i = 0; i < 32; i++) {
             data1[i] = new Data(5);
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 32; i++) {
             String temp = sc.nextLine();
             String items[] = temp.split(" ");
             String condition[] = items[0].split("");
