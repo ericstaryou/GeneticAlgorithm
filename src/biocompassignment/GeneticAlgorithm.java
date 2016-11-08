@@ -21,10 +21,10 @@ public class GeneticAlgorithm {
      */
     public static void main(String[] args) {
         int genTracker = 1;
-        int noOfGeneration = 500;
+        int noOfGeneration = 50;
         int p = 50;
         int n = 60;
-        int mut = 300;
+        int mut = 60;
         //int t = 10;
         Individual population[];
         Individual fittest = null;
@@ -223,7 +223,7 @@ public class GeneticAlgorithm {
         }
 
         //for each individual
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < p; i++) {
             pop[i].fitness = 0;
             ArrayList<String> list = new ArrayList();   //make an arraylist
             for (int j = 0; j < n; j++) {
