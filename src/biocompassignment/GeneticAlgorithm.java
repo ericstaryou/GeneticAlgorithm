@@ -24,7 +24,7 @@ public class GeneticAlgorithm {
         int noOfGeneration = 50;
         int p = 50;
         int n = 60;
-        int mut = 20;
+        int mut = 60;
         //int t = 10;
         Individual population[];
         Individual fittest = null;
@@ -39,7 +39,6 @@ public class GeneticAlgorithm {
 //            }
 //            System.out.println(" " + data1[i].output);
 //        }
-
         //array for line chart dataset
         int bf[] = new int[noOfGeneration];
         double mf[] = new double[noOfGeneration];
@@ -135,10 +134,10 @@ public class GeneticAlgorithm {
 
             //Mutation
             for (int i = 0; i < p; i++) {
+                int counter = 0;
                 for (int j = 0; j < n; j++) {
-                    if (rand.nextInt(1000) < mut) {
-                        int counter = 0;
-                        if (counter < 5) {
+                    if (counter < 5) {
+                        if (rand.nextInt(1000) < mut) {
                             if (offspring[i].gene[j] == 0) {
                                 int temp = rand.nextInt(3);
                                 while (temp == 0) {
@@ -158,16 +157,18 @@ public class GeneticAlgorithm {
                                 }
                                 offspring[i].gene[j] = temp;
                             }
-                            counter++;
-                        } else if (counter == 5) {
+                        }
+                        counter++;
+                    } else if (counter == 5) {
+                        if (rand.nextInt(1000) < mut) {
                             if (offspring[i].gene[j] == 0) {
                                 offspring[i].gene[j] = 1;
                             } else {
                                 offspring[i].gene[j] = 0;
                             }
-                            counter = 0;
                         }
-                    } 
+                        counter = 0;
+                    }
                 }
             }
 
