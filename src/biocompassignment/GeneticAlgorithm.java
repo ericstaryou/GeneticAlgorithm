@@ -21,10 +21,10 @@ public class GeneticAlgorithm {
      */
     public static void main(String[] args) {
         int genTracker = 1;
-        int noOfGeneration = 50;
+        int noOfGeneration = 500;
         int p = 50;
         int n = 60;
-        int mut = 60;
+        int mut = 0;
         //int t = 10;
         Individual population[];
         Individual fittest = null;
@@ -251,13 +251,13 @@ public class GeneticAlgorithm {
 
     public static void evaluateIndividuals(Individual pop[], int p, int n, Data[] data) {
 
-        Rule rule[] = new Rule[10];
-        for (int i = 0; i < 10; i++) {
-            rule[i] = new Rule(5);
-        }
-
         //for each individual
         for (int i = 0; i < p; i++) {
+            Rule rule[] = new Rule[10];
+            for (int j = 0; j < 10; j++) {
+                rule[j] = new Rule(5);
+            }
+
             pop[i].fitness = 0;
             ArrayList<String> list = new ArrayList();   //make an arraylist
             for (int j = 0; j < n; j++) {
@@ -290,18 +290,21 @@ public class GeneticAlgorithm {
 
             //compare indie's rule with sample rule to determine fitness
             for (int j = 0; j < 32; j++) { //for each data check to see how many rules got it right
+                ruleLoop:
                 for (int k = 0; k < 10; k++) { //for each rule check the condition and result
                     for (int l = 0; l < 5; l++) {
-                        if (data[j].var[l] != rule[k].cond[l]) {
+                        if (rule[k].cond[l] != 2 && data[j].var[l] != rule[k].cond[l]) {
                             break;
-                        } else if (l == 4) {
+                        } 
+                        if (l == 4) {
                             if (data[j].output == rule[k].action) {
                                 pop[i].fitness++;
                             }
+                            break ruleLoop;
                         }
                     }
                 }
-            }
+            }                          
         }
     }
 
