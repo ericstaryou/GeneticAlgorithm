@@ -21,10 +21,10 @@ public class GeneticAlgorithm {
      */
     public static void main(String[] args) {
         int genTracker = 1;
-        int noOfGeneration = 500;
+        int noOfGeneration = 50;
         int p = 50;
         int n = 60;
-        int mut = 0;
+        int mut = 60;
         //int t = 10;
         Individual population[];
         Individual fittest = null;
