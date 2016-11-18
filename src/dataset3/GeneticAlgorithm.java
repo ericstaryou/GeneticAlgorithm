@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dataset2;
+package dataset3;
 
+import dataset2.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import org.jfree.ui.RefineryUtilities;
@@ -50,12 +52,15 @@ public class GeneticAlgorithm {
             population[i] = new Individual(n);
         }
 
-        //fills individual's gene with binary randomly
+        //fills individual's gene with floating point number randomly
         for (int i = 0; i < p; i++) {
             int counter = 0;
             for (int j = 0; j < n; j++) {
                 if (counter < 6) {
-                    population[i].gene[j] = rand.nextInt(3);
+                    double randomValue = new Random().nextDouble();
+                    DecimalFormat df = new DecimalFormat("0.000000");
+                    System.out.println(df.format(randomValue));
+                    population[i].gene[j] = Double.parseDouble(df.format(randomValue));
                     counter++;
                 } else if (counter == 6) {
                     population[i].gene[j] = rand.nextInt(2);
@@ -70,7 +75,6 @@ public class GeneticAlgorithm {
 //        System.out.println("After init: ");
 //        printGenome(population, p, n);
 //        System.out.println("");
-
         //evaluate each individual
         GeneticAlgorithm.evaluateIndividuals(population, p, n, data1);
 
@@ -296,7 +300,7 @@ public class GeneticAlgorithm {
                     for (int l = 0; l < 6; l++) {
                         if (rule[k].cond[l] != 2 && data[j].var[l] != rule[k].cond[l]) {
                             break;
-                        } 
+                        }
                         if (l == 5) {
                             if (data[j].output == rule[k].action) {
                                 pop[i].fitness++;
@@ -307,7 +311,7 @@ public class GeneticAlgorithm {
                     }
                 }
             }
-            
+
             System.out.println("Individual[" + i + "]");
             for (int j = 0; j < 5; j++) {
                 for (int k = 0; k < 6; k++) {
