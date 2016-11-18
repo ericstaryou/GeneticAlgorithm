@@ -25,7 +25,7 @@ public class GeneticAlgorithm {
         int genTracker = 1;
         int noOfGeneration = 500;
         int p = 50;
-        int n = 70;
+        int n = 130;
         int mut = 30;
         //int t = 10;
         Individual population[];
@@ -56,13 +56,13 @@ public class GeneticAlgorithm {
         for (int i = 0; i < p; i++) {
             int counter = 0;
             for (int j = 0; j < n; j++) {
-                if (counter < 6) {
+                if (counter < 12) {
                     double randomValue = new Random().nextDouble();
                     DecimalFormat df = new DecimalFormat("0.000000");
                     System.out.println(df.format(randomValue));
                     population[i].gene[j] = Double.parseDouble(df.format(randomValue));
                     counter++;
-                } else if (counter == 6) {
+                } else if (counter == 12) {
                     population[i].gene[j] = rand.nextInt(2);
                     counter = 0;
                 }
@@ -118,7 +118,7 @@ public class GeneticAlgorithm {
             for (int i = 0; i < p; i = i + 2) {
                 int splitPoint = rand.nextInt(n);
                 for (int j = splitPoint; j < n; j++) {
-                    int temp = offspring[i].gene[j];
+                    double temp = offspring[i].gene[j];
                     offspring[i].gene[j] = offspring[i + 1].gene[j];
                     offspring[i + 1].gene[j] = temp;
                 }
@@ -260,13 +260,13 @@ public class GeneticAlgorithm {
         for (int i = 0; i < p; i++) {
             Rule rule[] = new Rule[10];
             for (int j = 0; j < 10; j++) {
-                rule[j] = new Rule(6);
+                rule[j] = new Rule(12);
             }
 
             pop[i].fitness = 0;
             ArrayList<String> list = new ArrayList();   //make an arraylist
             for (int j = 0; j < n; j++) {
-                list.add(Integer.toString(pop[i].gene[j]));
+                list.add(Double.toString(pop[i].gene[j]));
             }
 
             StringBuilder geneString = new StringBuilder();
@@ -276,32 +276,34 @@ public class GeneticAlgorithm {
             }
 
             //System.out.println("GENE HERE : " + geneString);
-            String geneArr[] = geneString.toString().split("(?<=\\G.{7})");
+            String geneArr[] = geneString.toString().split("(?<=\\G.{13})");
 
             //for each rule
             for (int j = 0; j < 10; j++) {
-                String cond = geneArr[j].substring(0, 6);
-                String act = geneArr[j].substring(6);
+                String cond = geneArr[j].substring(0, 12);
+                String act = geneArr[j].substring(12);
                 String condition[] = cond.split("");
 
                 //populate cond
-                for (int k = 0; k < 6; k++) {
+                for (int k = 0; k < 12; k++) {
                     rule[j].cond[k] = Integer.parseInt(condition[k]);
                 }
 
                 //populate output
                 rule[j].action = Integer.parseInt(act);
             }
+            
+            //make bigger value before smaller value**********************
 
             //compare indie's rule with sample rule to determine fitness
-            for (int j = 0; j < 64; j++) { //for each data check to see how many rules got it right
+            for (int j = 0; j < 2000; j++) { //for each data check to see how many rules got it right
                 ruleLoop:
-                for (int k = 0; k < 5; k++) { //for each rule check the condition and result
-                    for (int l = 0; l < 6; l++) {
+                for (int k = 0; k < 10; k++) { //for each rule check the condition and result
+                    for (int l = 0; l < 12; l++) {
                         if (rule[k].cond[l] != 2 && data[j].var[l] != rule[k].cond[l]) {
                             break;
                         }
-                        if (l == 5) {
+                        if (l == 11) {
                             if (data[j].output == rule[k].action) {
                                 pop[i].fitness++;
                                 //System.out.print("["+rule[k].cond[l]+"]");
@@ -346,12 +348,12 @@ public class GeneticAlgorithm {
     }
 
     public static Data[] readFile1() {
-        Scanner sc = new Scanner(GeneticAlgorithm.class.getResourceAsStream("/data2.txt"));
-        Data data1[] = new Data[64];
-        for (int i = 0; i < 64; i++) {
+        Scanner sc = new Scanner(GeneticAlgorithm.class.getResourceAsStream("/data3.txt"));
+        Data data1[] = new Data[2000];
+        for (int i = 0; i < 2000; i++) {
             data1[i] = new Data(6);
         }
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < 2000; i++) {
             String temp = sc.nextLine();
             String items[] = temp.split(" ");
             String condition[] = items[0].split("");

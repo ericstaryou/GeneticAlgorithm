@@ -13,11 +13,11 @@ import dataset2.*;
  */
 public class Individual {
 
-    int gene[];
+    double gene[];
     int fitness;
 
     public Individual(int n) {
-        this.gene = new int[n];
+        this.gene = new double[n];
     }
 
     @Override
