@@ -5,7 +5,6 @@
  */
 package dataset3;
 
-import dataset2.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
@@ -34,13 +33,13 @@ public class GeneticAlgorithm {
         Random rand = new Random();
 
         //test data1
-//        for (int i = 0; i < 64; i++) {
-//            System.out.print("Condition: ");
-//            for (int j = 0; j < 6; j++) {
-//                System.out.print(data1[i].var[j]);
-//            }
-//            System.out.println(" " + data1[i].output);
-//        }
+        for (int i = 0; i < 2000; i++) {
+            System.out.print("Data rule: ");
+            for (int j = 0; j < 6; j++) {
+                System.out.print(data1[i].var[j] + ",");
+            }
+            System.out.println(" " + data1[i].output);
+        }
         //array for line chart dataset
         int bf[] = new int[noOfGeneration];
         double mf[] = new double[noOfGeneration];
@@ -258,31 +257,12 @@ public class GeneticAlgorithm {
 
         //for each individual
         for (int i = 0; i < p; i++) {
-            pop[i].fitness = 0;
-            
             Rule rule[] = new Rule[10];
             for (int j = 0; j < 10; j++) {
                 rule[j] = new Rule(12);
             }
-            
-            ArrayList<Double> clist = new ArrayList();
-            ArrayList<Double> olist = new ArrayList();
-            double tempCond[] = new double[120];
-            double tempOutput[] = new double[10];
-            int counter = 0;
-            for (int j = 0; j < n; j++) { 
-                if(counter < 12){
-                    clist.add(pop[i].gene[j]); 
-                    counter++;
-                }else if(counter == 12){
-                    olist.add(pop[i].gene[j]);
-                    counter = 0;
-                }
-            }
-            
-            //tempCond = clist.toArray();
 
-            
+            pop[i].fitness = 0;
             ArrayList<String> list = new ArrayList();   //make an arraylist
             for (int j = 0; j < n; j++) {
                 list.add(Double.toString(pop[i].gene[j]));
@@ -375,15 +355,15 @@ public class GeneticAlgorithm {
         for (int i = 0; i < 2000; i++) {
             String temp = sc.nextLine();
             String items[] = temp.split(" ");
-            String condition[] = items[0].split("");
+            
 
             //populate cond
             for (int j = 0; j < 6; j++) {
-                data1[i].var[j] = Integer.parseInt(condition[j]);
+                data1[i].var[j] = Double.parseDouble(items[j]);
             }
 
             //populate output
-            data1[i].output = Integer.parseInt(items[1]);
+            data1[i].output = Double.parseDouble(items[6]);
         }
 
         return data1;
