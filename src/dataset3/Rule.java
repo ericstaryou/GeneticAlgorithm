@@ -5,8 +5,6 @@
  */
 package dataset3;
 
-import dataset2.*;
-
 /**
  *
  * @author Eric

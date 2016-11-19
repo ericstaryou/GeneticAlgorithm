@@ -22,10 +22,10 @@ public class GeneticAlgorithm {
      */
     public static void main(String[] args) {
         int genTracker = 1;
-        int noOfGeneration = 500;
+        int noOfGeneration = 1000;
         int p = 50;
         int n = 130;
-        int mut = 30;
+        int mut = 20;
         //int t = 10;
         Individual population[];
         Individual fittest = null;
@@ -33,13 +33,13 @@ public class GeneticAlgorithm {
         Random rand = new Random();
 
         //test data1
-        for (int i = 0; i < 2000; i++) {
-            System.out.print("Data rule: ");
-            for (int j = 0; j < 6; j++) {
-                System.out.print(data1[i].var[j] + ",");
-            }
-            System.out.println(" " + data1[i].output);
-        }
+//        for (int i = 0; i < 2000; i++) {
+//            System.out.print("Data rule: ");
+//            for (int j = 0; j < 6; j++) {
+//                System.out.print(data1[i].var[j] + ",");
+//            }
+//            System.out.println(" " + data1[i].output);
+//        }
         //array for line chart dataset
         int bf[] = new int[noOfGeneration];
         double mf[] = new double[noOfGeneration];
@@ -58,7 +58,6 @@ public class GeneticAlgorithm {
                 if (counter < 12) {
                     double randomValue = new Random().nextDouble();
                     DecimalFormat df = new DecimalFormat("0.000000");
-                    System.out.println(df.format(randomValue));
                     population[i].gene[j] = Double.parseDouble(df.format(randomValue));
                     counter++;
                 } else if (counter == 12) {
@@ -139,30 +138,23 @@ public class GeneticAlgorithm {
             for (int i = 0; i < p; i++) {
                 int counter = 0;
                 for (int j = 0; j < n; j++) {
-                    if (counter < 6) {
+                    if (counter < 12) {
                         if (rand.nextInt(1000) < mut) {
-                            if (offspring[i].gene[j] == 0) {
-                                int temp = rand.nextInt(3);
-                                while (temp == 0) {
-                                    temp = rand.nextInt(3);
-                                }
-                                offspring[i].gene[j] = temp;
-                            } else if (offspring[i].gene[j] == 1) {
-                                int temp = rand.nextInt(3);
-                                while (temp == 1) {
-                                    temp = rand.nextInt(3);
-                                }
-                                offspring[i].gene[j] = temp;
-                            } else if (offspring[i].gene[j] == 2) {
-                                int temp = rand.nextInt(3);
-                                while (temp == 2) {
-                                    temp = rand.nextInt(3);
-                                }
-                                offspring[i].gene[j] = temp;
+                            double temp = Math.random();
+                            while (temp == 0 || temp == offspring[i].gene[j]) {
+                                temp = Math.random();
+                            }
+                            
+                            double gene = offspring[i].gene[j];
+                            double sum = gene + temp;
+                            if(sum > 1){
+                                offspring[i].gene[j] += temp*(-1);
+                            }else{
+                                offspring[i].gene[j] += temp;
                             }
                         }
                         counter++;
-                    } else if (counter == 6) {
+                    } else if (counter == 12) {
                         if (rand.nextInt(1000) < mut) {
                             if (offspring[i].gene[j] == 0) {
                                 offspring[i].gene[j] = 1;
@@ -179,7 +171,15 @@ public class GeneticAlgorithm {
 //            System.out.println("After Mutation:");
 //            printGenome(offspring, p, n);
 //            System.out.println("");
-            evaluateIndividuals(offspring, p, n, data1);
+            Rule rule1[] = evaluateIndividuals(offspring, p, n, data1);
+//            //test rule1
+//            for (int i = 0; i < 10; i++) {
+//                System.out.print("Rule rule: ");
+//                for (int j = 0; j < 12; j++) {
+//                    System.out.print(rule1[i].cond[j] + ",");
+//                }
+//                System.out.println(" " + rule1[i].action);
+//            }
 
             //total fitness check
             System.out.println("Best fitness check after mutation: " + getBestFitness(offspring, p));
@@ -253,21 +253,20 @@ public class GeneticAlgorithm {
         return meanFitness;
     }
 
-    public static void evaluateIndividuals(Individual pop[], int p, int n, Data[] data) {
-
+    public static Rule[] evaluateIndividuals(Individual pop[], int p, int n, Data[] data) {
+        Rule rule[] = null;
         //for each individual
         for (int i = 0; i < p; i++) {
             pop[i].fitness = 0;
 
-            Rule rule[] = new Rule[10];
+            rule = new Rule[10];
             for (int j = 0; j < 10; j++) {
                 rule[j] = new Rule(12);
             }
 
             ArrayList<Double> clist = new ArrayList();
             ArrayList<Double> olist = new ArrayList();
-            double tempCond[] = new double[120];
-            double tempOutput[] = new double[10];
+
             int counter = 0;
             for (int j = 0; j < n; j++) {
                 if (counter < 12) {
@@ -279,64 +278,55 @@ public class GeneticAlgorithm {
                 }
             }
 
-            //tempCond = clist.toArray();
-            ArrayList<String> list = new ArrayList();   //make an arraylist
-            for (int j = 0; j < n; j++) {
-                list.add(Double.toString(pop[i].gene[j]));
-            }
-
-            StringBuilder geneString = new StringBuilder();
-
-            for (String s : list) {
-                geneString.append(s);
-            }
-
-            //System.out.println("GENE HERE : " + geneString);
-            String geneArr[] = geneString.toString().split("(?<=\\G.{13})");
-
-            //for each rule
+            //populate Rule
+            int condCounter = 0;
             for (int j = 0; j < 10; j++) {
-                String cond = geneArr[j].substring(0, 12);
-                String act = geneArr[j].substring(12);
-                String condition[] = cond.split("");
-
-                //populate cond
+                //populate conditon
                 for (int k = 0; k < 12; k++) {
-                    rule[j].cond[k] = Integer.parseInt(condition[k]);
+                    rule[j].cond[k] = clist.get(condCounter + k);
                 }
+                condCounter += 12;
 
                 //populate output
-                rule[j].action = Integer.parseInt(act);
+                rule[j].action = olist.get(j);
             }
 
-            //make bigger value before smaller value**********************
+            //make smaller value before larger value
+            for (int j = 0; j < 10; j++) {
+                for (int k = 0; k < 12; k += 2) {
+                    double temp = 0;
+                    if (rule[j].cond[k] > rule[j].cond[k + 1]) {
+                        temp = rule[j].cond[k];
+                        rule[j].cond[k] = rule[j].cond[k + 1];
+                        rule[j].cond[k + 1] = temp;
+                    }
+                }
+            }
+
             //compare indie's rule with sample rule to determine fitness
             for (int j = 0; j < 2000; j++) { //for each data check to see how many rules got it right
                 ruleLoop:
                 for (int k = 0; k < 10; k++) { //for each rule check the condition and result
-                    for (int l = 0; l < 12; l++) {
-                        if (rule[k].cond[l] != 2 && data[j].var[l] != rule[k].cond[l]) {
+                    int x = 0;
+                    for (int l = 0; l < 12; l += 2) {
+                        if (data[j].var[x] < rule[k].cond[l] || data[j].var[x] > rule[k].cond[l + 1]) {
                             break;
                         }
-                        if (l == 11) {
+
+                        if (l == 10) {
                             if (data[j].output == rule[k].action) {
                                 pop[i].fitness++;
                                 //System.out.print("["+rule[k].cond[l]+"]");
                             }
                             break ruleLoop;
                         }
+
+                        x++;
                     }
                 }
             }
-
-            System.out.println("Individual[" + i + "]");
-            for (int j = 0; j < 5; j++) {
-                for (int k = 0; k < 6; k++) {
-                    //System.out.print("["+rule[j].cond[k]+"]");
-                }
-                //System.out.println(" "+rule[j].action);
-            }
-        }
+        }//for each individual
+        return rule;
     }
 
     public static Individual getFittestIndividual(Individual pop[], int p) {
