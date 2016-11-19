@@ -13,7 +13,7 @@ import dataset2.*;
  */
 public class Rule {
     double cond[];
-    int action;
+    double action;
     
     public Rule(int n){
         cond = new double[n];

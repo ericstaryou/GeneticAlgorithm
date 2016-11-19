@@ -13,7 +13,7 @@ import dataset2.*;
  */
 public class Data {
     double var[];
-    int output;
+    double output;
     
     public Data(int n){
         var = new double[n];
