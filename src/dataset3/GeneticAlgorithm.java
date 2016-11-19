@@ -22,7 +22,7 @@ public class GeneticAlgorithm {
      */
     public static void main(String[] args) {
         int genTracker = 1;
-        int noOfGeneration = 1000;
+        int noOfGeneration = 500;
         int p = 50;
         int n = 130;
         int mut = 20;
@@ -31,6 +31,7 @@ public class GeneticAlgorithm {
         Individual fittest = null;
         Data data1[] = readFile1();
         Random rand = new Random();
+        ArrayList<Individual> bestList = new ArrayList();
 
         //test data1
 //        for (int i = 0; i < 2000; i++) {
@@ -89,6 +90,7 @@ public class GeneticAlgorithm {
         /**
          * Generation cycle starts here
          */
+        int genCounter = 0;
         for (int k = 1; k < noOfGeneration; k++) {
 
             System.out.println("_GEN: " + (genTracker + 1));
@@ -192,7 +194,14 @@ public class GeneticAlgorithm {
 
             //pass offspring to next generation
             replaceWorstIndividual(offspring, p, fittest);
-
+            
+            //get the fittest individual for every 10th generation for validation
+            if(genCounter == 9){
+                bestList.add(getFittestIndividual(population, p));
+                genCounter = 0;
+            }
+            genCounter++;
+            
             //populate line chart dataset array
             bf[k] = getBestFitness(offspring, p);
             mf[k] = getMeanFitness(offspring, p);
@@ -203,6 +212,14 @@ public class GeneticAlgorithm {
 
             genTracker++;
         }
+        
+        int y = 0;
+        for(Individual x : bestList){
+            System.out.println(y+ ": " + x.fitness);
+            y++;
+        }
+        
+        
 
         //Creating Line Chart
         final ChartUI lc = new ChartUI("Genetic Algorithm Best Fitness", noOfGeneration, bf, mf);
