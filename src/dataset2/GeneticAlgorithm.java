@@ -16,6 +16,8 @@ import java.util.Scanner;
  */
 public class GeneticAlgorithm {
 
+    static ArrayList<Integer> condi = new ArrayList();
+    static ArrayList<Integer> outp = new ArrayList();
     /**
      * @param args the command line arguments
      */
@@ -200,6 +202,15 @@ public class GeneticAlgorithm {
 
             genTracker++;
         }
+        
+        int ccount = 0;
+        for (int i = 0; i < outp.size(); i++) {
+            for (int j = 0; j < 6; j++) {
+                System.out.print(condi.get(j));
+            }
+            ccount =+ 6;
+            System.out.println(" "+outp.get(i));
+        }
 
         //Creating Line Chart
         final ChartUI lc = new ChartUI("Genetic Algorithm Best Fitness", noOfGeneration, bf, mf);
@@ -288,7 +299,7 @@ public class GeneticAlgorithm {
                 //populate output
                 rule[j].action = Integer.parseInt(act);
             }
-
+            
             //compare indie's rule with sample rule to determine fitness
             for (int j = 0; j < 64; j++) { //for each data check to see how many rules got it right
                 ruleLoop:
@@ -300,20 +311,18 @@ public class GeneticAlgorithm {
                         if (l == 5) {
                             if (data[j].output == rule[k].action) {
                                 pop[i].fitness++;
-                                //System.out.print("["+rule[k].cond[l]+"]");
+                                //System.out.println("Pattern of  Individual " + i + ": ");
+                                for (int m = 0; m < 6; m++) {
+                                    //System.out.print(rule[k].cond[m]);
+                                    condi.add(rule[k].cond[m]);
+                                }
+                                //System.out.println(" "+rule[k].action);
+                                outp.add(rule[k].action);
                             }
                             break ruleLoop;
                         }
                     }
                 }
-            }
-            
-            System.out.println("Individual[" + i + "]");
-            for (int j = 0; j < 5; j++) {
-                for (int k = 0; k < 6; k++) {
-                    //System.out.print("["+rule[j].cond[k]+"]");
-                }
-                //System.out.println(" "+rule[j].action);
             }
         }
     }
