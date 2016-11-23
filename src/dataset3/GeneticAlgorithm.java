@@ -22,10 +22,10 @@ public class GeneticAlgorithm {
      */
     public static void main(String[] args) {
         int genTracker = 1;
-        int noOfGeneration = 500;
+        int noOfGeneration = 1000;
         int p = 50;
         int n = 130;
-        int mut = 20;
+        int mut = 10;
         //int t = 10;
         Individual population[];
         Individual fittest = null;
@@ -146,12 +146,12 @@ public class GeneticAlgorithm {
                             while (temp == 0 || temp == offspring[i].gene[j]) {
                                 temp = Math.random();
                             }
-                            
+
                             double gene = offspring[i].gene[j];
                             double sum = gene + temp;
-                            if(sum > 1){
-                                offspring[i].gene[j] += temp*(-1);
-                            }else{
+                            if (sum > 1) {
+                                offspring[i].gene[j] += temp * (-1);
+                            } else {
                                 offspring[i].gene[j] += temp;
                             }
                         }
@@ -194,14 +194,14 @@ public class GeneticAlgorithm {
 
             //pass offspring to next generation
             replaceWorstIndividual(offspring, p, fittest);
-            
+
             //get the fittest individual for every 10th generation for validation
-            if(genCounter == 9){
+            if (genCounter == 9) {
                 bestList.add(getFittestIndividual(population, p));
                 genCounter = 0;
             }
             genCounter++;
-            
+
             //populate line chart dataset array
             bf[k] = getBestFitness(offspring, p);
             mf[k] = getMeanFitness(offspring, p);
@@ -212,20 +212,26 @@ public class GeneticAlgorithm {
 
             genTracker++;
         }
-        
-        int y = 0;
-        for(Individual x : bestList){
-            System.out.println(y+ ": " + x.fitness);
-            y++;
-        }
-        
-        
 
         //Creating Line Chart
         final ChartUI lc = new ChartUI("Genetic Algorithm Best Fitness", noOfGeneration, bf, mf);
         lc.pack();
         RefineryUtilities.centerFrameOnScreen(lc);
         lc.setVisible(true);
+
+        testBestIndividuals(bestList, n, data1);
+        int bestFit[] = new int[bestList.size()];
+        int i = 0;
+        for (Individual x : bestList) {
+            System.out.println(/*"Fitness of Best Individuals " +*/ x.fitness);
+            bestFit[i] = x.fitness;
+            i++;
+        }
+        
+        final ChartUI lc2 = new ChartUI("Model Validation Graph", bestList.size(), bestFit, mf);
+        lc2.pack();
+        RefineryUtilities.centerFrameOnScreen(lc2);
+        lc2.setVisible(true);
     }
 
     public static void printGenome(Individual pop[], int p, int n) {
@@ -321,7 +327,7 @@ public class GeneticAlgorithm {
             }
 
             //compare indie's rule with sample rule to determine fitness
-            for (int j = 0; j < 2000; j++) { //for each data check to see how many rules got it right
+            for (int j = 0; j < 1000; j++) { //for each data check to see how many rules got it right
                 ruleLoop:
                 for (int k = 0; k < 10; k++) { //for each rule check the condition and result
                     int x = 0;
@@ -332,6 +338,86 @@ public class GeneticAlgorithm {
 
                         if (l == 10) {
                             if (data[j].output == rule[k].action) {
+                                pop[i].fitness++;
+                                //System.out.print("["+rule[k].cond[l]+"]");
+                            }
+                            break ruleLoop;
+                        }
+
+                        x++;
+                    }
+                }
+            }
+        }//for each individual
+        return rule;
+    }
+
+    public static Rule[] testBestIndividuals(ArrayList<Individual> list, int n, Data[] data) {
+        Rule rule[] = null;
+        Individual pop[] = new Individual[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            pop[i] = list.get(i);
+        }
+        //for each individual
+        for (int i = 0; i < list.size(); i++) {
+            pop[i].fitness = 0;
+
+            rule = new Rule[10];
+            for (int j = 0; j < 10; j++) {
+                rule[j] = new Rule(12);
+            }
+
+            ArrayList<Double> clist = new ArrayList();
+            ArrayList<Double> olist = new ArrayList();
+
+            int counter = 0;
+            for (int j = 0; j < n; j++) {
+                if (counter < 12) {
+                    clist.add(pop[i].gene[j]);
+                    counter++;
+                } else if (counter == 12) {
+                    olist.add(pop[i].gene[j]);
+                    counter = 0;
+                }
+            }
+
+            //populate Rule
+            int condCounter = 0;
+            for (int j = 0; j < 10; j++) {
+                //populate conditon
+                for (int k = 0; k < 12; k++) {
+                    rule[j].cond[k] = clist.get(condCounter + k);
+                }
+                condCounter += 12;
+
+                //populate output
+                rule[j].action = olist.get(j);
+            }
+
+            //make smaller value before larger value
+            for (int j = 0; j < 10; j++) {
+                for (int k = 0; k < 12; k += 2) {
+                    double temp = 0;
+                    if (rule[j].cond[k] > rule[j].cond[k + 1]) {
+                        temp = rule[j].cond[k];
+                        rule[j].cond[k] = rule[j].cond[k + 1];
+                        rule[j].cond[k + 1] = temp;
+                    }
+                }
+            }
+
+            //compare indie's rule with sample rule to determine fitness
+            for (int j = 0; j < 1000; j++) { //for each data check to see how many rules got it right
+                ruleLoop:
+                for (int k = 0; k < 10; k++) { //for each rule check the condition and result
+                    int x = 0;
+                    for (int l = 0; l < 12; l += 2) {
+                        if (data[j + 1000].var[x] < rule[k].cond[l] || data[j + 1000].var[x] > rule[k].cond[l + 1]) {
+                            break;
+                        }
+
+                        if (l == 10) {
+                            if (data[j + 1000].output == rule[k].action) {
                                 pop[i].fitness++;
                                 //System.out.print("["+rule[k].cond[l]+"]");
                             }
