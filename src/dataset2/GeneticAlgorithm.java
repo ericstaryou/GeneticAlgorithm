@@ -15,9 +15,7 @@ import java.util.Scanner;
  * @author Eric
  */
 public class GeneticAlgorithm {
-
-    static ArrayList<Integer> condi = new ArrayList();
-    static ArrayList<Integer> outp = new ArrayList();
+    
     /**
      * @param args the command line arguments
      */
@@ -25,13 +23,13 @@ public class GeneticAlgorithm {
         int genTracker = 1;
         int noOfGeneration = 500;
         int p = 50;
-        int n = 70;
+        int n = 35;
         int mut = 30;
-        //int t = 10;
         Individual population[];
         Individual fittest = null;
         Data data1[] = readFile1();
         Random rand = new Random();
+        ArrayList<Individual> bestList = new ArrayList();
 
         //test data1
 //        for (int i = 0; i < 64; i++) {
@@ -72,7 +70,6 @@ public class GeneticAlgorithm {
 //        System.out.println("After init: ");
 //        printGenome(population, p, n);
 //        System.out.println("");
-
         //evaluate each individual
         GeneticAlgorithm.evaluateIndividuals(population, p, n, data1);
 
@@ -192,6 +189,9 @@ public class GeneticAlgorithm {
             //pass offspring to next generation
             replaceWorstIndividual(offspring, p, fittest);
 
+            //get fittest individual for each population
+            bestList.add(getFittestIndividual(offspring, p));
+
             //populate line chart dataset array
             bf[k] = getBestFitness(offspring, p);
             mf[k] = getMeanFitness(offspring, p);
@@ -202,15 +202,9 @@ public class GeneticAlgorithm {
 
             genTracker++;
         }
-        
-        int ccount = 0;
-        for (int i = 0; i < outp.size(); i++) {
-            for (int j = 0; j < 6; j++) {
-                System.out.print(condi.get(j));
-            }
-            ccount =+ 6;
-            System.out.println(" "+outp.get(i));
-        }
+
+        //print pattern
+        printPattern(bestList, n, data1);
 
         //Creating Line Chart
         final ChartUI lc = new ChartUI("Genetic Algorithm Best Fitness", noOfGeneration, bf, mf);
@@ -286,7 +280,7 @@ public class GeneticAlgorithm {
             String geneArr[] = geneString.toString().split("(?<=\\G.{7})");
 
             //for each rule
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < 5; j++) {
                 String cond = geneArr[j].substring(0, 6);
                 String act = geneArr[j].substring(6);
                 String condition[] = cond.split("");
@@ -299,7 +293,7 @@ public class GeneticAlgorithm {
                 //populate output
                 rule[j].action = Integer.parseInt(act);
             }
-            
+
             //compare indie's rule with sample rule to determine fitness
             for (int j = 0; j < 64; j++) { //for each data check to see how many rules got it right
                 ruleLoop:
@@ -307,23 +301,68 @@ public class GeneticAlgorithm {
                     for (int l = 0; l < 6; l++) {
                         if (rule[k].cond[l] != 2 && data[j].var[l] != rule[k].cond[l]) {
                             break;
-                        } 
+                        }
                         if (l == 5) {
                             if (data[j].output == rule[k].action) {
                                 pop[i].fitness++;
-                                //System.out.println("Pattern of  Individual " + i + ": ");
-                                for (int m = 0; m < 6; m++) {
-                                    //System.out.print(rule[k].cond[m]);
-                                    condi.add(rule[k].cond[m]);
-                                }
-                                //System.out.println(" "+rule[k].action);
-                                outp.add(rule[k].action);
                             }
                             break ruleLoop;
                         }
                     }
                 }
             }
+        }
+    }
+
+    public static void printPattern(ArrayList<Individual> bestlist, int n, Data data[]) {
+        ArrayList<Integer> condi = new ArrayList();
+        ArrayList<Integer> outp = new ArrayList();
+        Individual pop[] = new Individual[bestlist.size()];
+        for (int i = 0; i < bestlist.size(); i++) {
+            pop[i] = bestlist.get(i);
+        }
+
+        Rule rule[] = new Rule[10];
+        for (int j = 0; j < 10; j++) {
+            rule[j] = new Rule(6);
+        }
+
+        ArrayList<String> list = new ArrayList();   //make an arraylist
+        for (int j = 0; j < n; j++) {
+            list.add(Integer.toString(pop[pop.length-1].gene[j]));
+        }
+
+        StringBuilder geneString = new StringBuilder();
+
+        for (String s : list) {
+            geneString.append(s);
+        }
+
+        //System.out.println("GENE HERE : " + geneString);
+        String geneArr[] = geneString.toString().split("(?<=\\G.{7})");
+
+        //for each rule
+        for (int j = 0; j < 5; j++) {
+            String cond = geneArr[j].substring(0, 6);
+            String act = geneArr[j].substring(6);
+            String condition[] = cond.split("");
+
+            //populate cond
+            for (int k = 0; k < 6; k++) {
+                rule[j].cond[k] = Integer.parseInt(condition[k]);
+            }
+
+            //populate output
+            rule[j].action = Integer.parseInt(act);
+        }
+        
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 6; j++) {
+                System.out.print(rule[i].cond[j]);
+            }
+            
+            System.out.println(" " + rule[i].action);
+            
         }
     }
 

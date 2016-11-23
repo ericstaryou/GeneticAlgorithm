@@ -213,12 +213,6 @@ public class GeneticAlgorithm {
             genTracker++;
         }
 
-        int y = 0;
-        for (Individual x : bestList) {
-            System.out.println(y + ": " + x.fitness);
-            y++;
-        }
-
         //Creating Line Chart
         final ChartUI lc = new ChartUI("Genetic Algorithm Best Fitness", noOfGeneration, bf, mf);
         lc.pack();
@@ -226,9 +220,18 @@ public class GeneticAlgorithm {
         lc.setVisible(true);
 
         testBestIndividuals(bestList, n, data1);
+        int bestFit[] = new int[bestList.size()];
+        int i = 0;
         for (Individual x : bestList) {
-            System.out.println("Fitness of Best" + x.fitness);
+            System.out.println(/*"Fitness of Best Individuals " +*/ x.fitness);
+            bestFit[i] = x.fitness;
+            i++;
         }
+        
+        final ChartUI lc2 = new ChartUI("Model Validation Graph", bestList.size(), bestFit, mf);
+        lc2.pack();
+        RefineryUtilities.centerFrameOnScreen(lc2);
+        lc2.setVisible(true);
     }
 
     public static void printGenome(Individual pop[], int p, int n) {
