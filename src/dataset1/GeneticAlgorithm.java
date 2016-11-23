@@ -25,7 +25,6 @@ public class GeneticAlgorithm {
         int p = 50;
         int n = 60;
         int mut = 60;
-        //int t = 10;
         Individual population[];
         Individual fittest = null;
         Data data1[] = readFile1();
