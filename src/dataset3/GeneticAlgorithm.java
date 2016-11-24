@@ -23,9 +23,9 @@ public class GeneticAlgorithm {
     public static void main(String[] args) {
         int genTracker = 1;
         int noOfGeneration = 1000;
-        int p = 50;
+        int p = 100;
         int n = 130;
-        int mut = 10;
+        int mut = 5;
         Individual population[];
         Individual fittest = null;
         Data data1[] = readFile1();
@@ -226,6 +226,8 @@ public class GeneticAlgorithm {
             bestFit[i] = x.fitness;
             i++;
         }
+        
+        System.out.println("bf = "+ bf[bf.length-1] );
         
         final ChartUI lc2 = new ChartUI("Model Validation Graph", bestList.size(), bestFit, mf);
         lc2.pack();

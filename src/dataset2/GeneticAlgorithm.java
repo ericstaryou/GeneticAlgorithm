@@ -21,9 +21,9 @@ public class GeneticAlgorithm {
      */
     public static void main(String[] args) {
         int genTracker = 1;
-        int noOfGeneration = 500;
+        int noOfGeneration = 200;
         int p = 50;
-        int n = 35;
+        int n = 28;
         int mut = 30;
         Individual population[];
         Individual fittest = null;
@@ -280,7 +280,7 @@ public class GeneticAlgorithm {
             String geneArr[] = geneString.toString().split("(?<=\\G.{7})");
 
             //for each rule
-            for (int j = 0; j < 5; j++) {
+            for (int j = 0; j < 4; j++) {
                 String cond = geneArr[j].substring(0, 6);
                 String act = geneArr[j].substring(6);
                 String condition[] = cond.split("");
@@ -297,7 +297,7 @@ public class GeneticAlgorithm {
             //compare indie's rule with sample rule to determine fitness
             for (int j = 0; j < 64; j++) { //for each data check to see how many rules got it right
                 ruleLoop:
-                for (int k = 0; k < 5; k++) { //for each rule check the condition and result
+                for (int k = 0; k < 4; k++) { //for each rule check the condition and result
                     for (int l = 0; l < 6; l++) {
                         if (rule[k].cond[l] != 2 && data[j].var[l] != rule[k].cond[l]) {
                             break;
@@ -315,15 +315,14 @@ public class GeneticAlgorithm {
     }
 
     public static void printPattern(ArrayList<Individual> bestlist, int n, Data data[]) {
-        ArrayList<Integer> condi = new ArrayList();
-        ArrayList<Integer> outp = new ArrayList();
+
         Individual pop[] = new Individual[bestlist.size()];
         for (int i = 0; i < bestlist.size(); i++) {
             pop[i] = bestlist.get(i);
         }
 
-        Rule rule[] = new Rule[10];
-        for (int j = 0; j < 10; j++) {
+        Rule rule[] = new Rule[5];
+        for (int j = 0; j < 5; j++) {
             rule[j] = new Rule(6);
         }
 
@@ -342,7 +341,7 @@ public class GeneticAlgorithm {
         String geneArr[] = geneString.toString().split("(?<=\\G.{7})");
 
         //for each rule
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 4; j++) {
             String cond = geneArr[j].substring(0, 6);
             String act = geneArr[j].substring(6);
             String condition[] = cond.split("");
@@ -356,6 +355,7 @@ public class GeneticAlgorithm {
             rule[j].action = Integer.parseInt(act);
         }
         
+        System.out.println("Pattern: ");
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 6; j++) {
                 System.out.print(rule[i].cond[j]);
@@ -365,7 +365,7 @@ public class GeneticAlgorithm {
             
         }
     }
-
+    
     public static Individual getFittestIndividual(Individual pop[], int p) {
         Individual fittest = null;
         int largest = Integer.MIN_VALUE;

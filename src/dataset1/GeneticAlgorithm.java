@@ -21,10 +21,10 @@ public class GeneticAlgorithm {
      */
     public static void main(String[] args) {
         int genTracker = 1;
-        int noOfGeneration = 50;
-        int p = 50;
+        int noOfGeneration = 500;
+        int p = 100;
         int n = 60;
-        int mut = 60;
+        int mut = 20;
         Individual population[];
         Individual fittest = null;
         Data data1[] = readFile1();
@@ -66,9 +66,9 @@ public class GeneticAlgorithm {
         }
 
         //genome check
-        System.out.println("After init: ");
-        printGenome(population, p, n);
-        System.out.println("");
+//        System.out.println("After init: ");
+//        printGenome(population, p, n);
+//        System.out.println("");
 
         //evaluate each individual
         GeneticAlgorithm.evaluateIndividuals(population, p, n, data1);
@@ -172,9 +172,9 @@ public class GeneticAlgorithm {
             }
 
             //genome check
-            System.out.println("After Mutation:");
-            printGenome(offspring, p, n);
-            System.out.println("");
+//            System.out.println("After Mutation:");
+//            printGenome(offspring, p, n);
+//            System.out.println("");
             evaluateIndividuals(offspring, p, n, data1);
 
             //total fitness check
@@ -192,18 +192,30 @@ public class GeneticAlgorithm {
             //populate line chart dataset array
             bf[k] = getBestFitness(offspring, p);
             mf[k] = getMeanFitness(offspring, p);
+            System.out.println("bf = " + bf[k]);
+            System.out.println("");
 
             //replace old generation with new generation
             population = offspring;
 
             genTracker++;
         }
-
+        
         //Creating Line Chart
         final ChartUI lc = new ChartUI("Genetic Algorithm Best Fitness", noOfGeneration, bf, mf);
         lc.pack();
         RefineryUtilities.centerFrameOnScreen(lc);
         lc.setVisible(true);
+        
+        for (int i = 0; i < bf.length; i++) {
+            System.out.println(bf[i]);
+        }
+        
+        for (int i = 0; i < bf.length; i++) {
+            System.out.println(mf[i]);
+        }
+        
+        System.out.println("bf = "+ bf[bf.length-1] );
     }
 
     public static void printGenome(Individual pop[], int p, int n) {
